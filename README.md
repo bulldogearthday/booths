@@ -1,4 +1,4 @@
-# booths
+# Booths
 A Progressive Web App for paperless booth visit provisioning.
 
 ## App basics
