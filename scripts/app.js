@@ -2,17 +2,12 @@
 (function() {
   'use strict';
 
-  var initialBoothList = [{
-    key: 'freecycle',
-    label: 'Freecycle',
-    description: 'bring something and/or take something',
-    certificate: null
-  }];
+  var initialBoothList = initial_booth_data;  // From jsonp!
 
   var app = {
     hasRequestPending: false,
     isLoading: true,
-    unlockedBooths: {},
+    booths: [],
     spinner: document.querySelector('.loader'),
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
@@ -31,9 +26,26 @@
     app.updateBooths();
   });
 
-  document.getElementById('butAdd').addEventListener('click', function() {
+  document.getElementById('butScan').addEventListener('click', function() {
     // Initiate a QR Code snapshot process
     app.toggleUnlockProcess(true);
+  });
+
+  document.getElementById('butScanQR').addEventListener('click', function() {
+    // Snapshot a QR code to unlock a booth
+    // var select = document.getElementById('selectCityToAdd');
+    // var selected = select.options[select.selectedIndex];
+    // var key = selected.value;
+    // var label = selected.textContent;
+    // app.getForecast(key, label);
+    // app.selectedCities.push({key: key, label: label});
+    // app.saveSelectedCities();
+    app.toggleUnlockProcess(false);
+  });
+
+  document.getElementById('butCancel').addEventListener('click', function() {
+    // Close the scan QR dialog
+    app.toggleUnlockProcess(false);
   });
 
 
@@ -55,19 +67,19 @@
   // Updates a booth card with the latest booth information. If the card
   // doesn't already exist, it's cloned from the template.
   app.updateBoothCard = function(data) {
-    var card = app.unlockedBooths[data.key];
+    if (!data)
+      return;
+    var card = app.booths[data.key];
     if (!card) {
       card = app.cardTemplate.cloneNode(true);
       card.classList.remove('cardTemplate');
       card.querySelector('.location').textContent = data.label;
       card.removeAttribute('hidden');
       app.container.appendChild(card);
-      app.unlockedBooths[data.key] = card;
+      app.booths[data.key] = card;
     }
     card.querySelector('.description').textContent = data.description;
-    var today = new Date();
-    card.querySelector('.date').textContent = today;
-    // card.querySelector('.current .icon').classList.add(data.currently.icon);
+    card.querySelector('.icon').classList.add(data.unlocked ? 'unlocked' : 'locked');
     if (app.isLoading) {
       app.spinner.setAttribute('hidden', true);
       app.container.removeAttribute('hidden');
@@ -84,55 +96,59 @@
 
   // Gets a info for a specific booth and update the card with the data
   app.getBooth = function(key, label) {
-    var url = 'https://publicdata-weather.firebaseio.com/';
+    var url = 'https://earthday.firebaseio.com/';
     url += key + '.json';
     if ('caches' in window) {
-    //   caches.match(url).then(function(response) {
-    //     if (response) {
-    //       response.json().then(function(json) {
-    //         // Only update if the XHR is still pending, otherwise the XHR
-    //         // has already returned and provided the latest data.
-    //         if (app.hasRequestPending) {
-    //           console.log('updated from cache');
-    //           json.key = key;
-    //           json.label = label;
-    //           app.updateBoothCard(json);
-    //         }
-    //       });
-    //     }
-    //   });
+      caches.match(url).then(function(response) {
+        if (response) {
+          response.json().then(function(json) {
+            // Only update if the XHR is still pending, otherwise the XHR
+            // has already returned and provided the latest data.
+            if (app.hasRequestPending) {
+              console.log('updated from cache');
+              if (json) {
+                json.key = key;
+                json.label = label;
+              }
+              app.updateBoothCard(json);
+            }
+          });
+        }
+      });
     }
     // Make the XHR to get the data, then update the card
     app.hasRequestPending = true;
     var request = new XMLHttpRequest();
-    // request.onreadystatechange = function() {
-    //   if (request.readyState === XMLHttpRequest.DONE) {
-    //     if (request.status === 200) {
-    //       var response = JSON.parse(request.response);
-    //       response.key = key;
-    //       response.label = label;
-    //       app.hasRequestPending = false;
-    //       app.updateBoothCard(response);
-    //     }
-    //   }
-    // };
-    // request.open('GET', url);
-    // request.send();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          if (response) {
+            response.key = key;
+            response.label = label;
+          }
+          app.hasRequestPending = false;
+          app.updateBoothCard(response);
+        }
+      }
+    };
+    request.open('GET', url);
+    request.send();
   };
 
   // Iterate all of the cards and attempt to get the latest booth data
   app.updateBooths = function() {
-    var keys = Object.keys(app.unlockedBooths);
+    var keys = Object.keys(app.booths);
     keys.forEach(function(key) {
       app.getBooth(key);
     });
   };
 
   // Save list of cities to localStorage, see note below about localStorage.
-  app.saveUnlockedBooths = function() {
-    var unlockedBooths = JSON.stringify(app.unlockedBooths);
+  app.saveBooths = function() {
+    var booths = JSON.stringify(app.booths);
     // IMPORTANT: See notes about use of localStorage.
-    localStorage.unlockedBooths = unlockedBooths;
+    localStorage.booths = booths;
   };
 
   /************************************************************************
@@ -146,19 +162,19 @@
    *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
    ************************************************************************/
 
-  app.unlockedBooths = localStorage.unlockedBooths;
-  if (app.unlockedBooths) {
-    app.unlockedBooths = JSON.parse(app.unlockedBooths);
-    app.unlockedBooths.forEach(function(booth) {
+  app.booths = localStorage.booths;
+  if (app.booths) {
+    app.booths = JSON.parse(app.booths);
+    app.booths.forEach(function(booth) {
       app.getBooth(booth.key, booth.label);
     });
   } else {
-    app.unlockedBooths = [];
+    app.booths = [];
     for(var i = 0; i < initialBoothList.length; i++) {
       app.updateBoothCard(initialBoothList[i]);
-      app.unlockedBooths.push({key: initialBoothList[i].key, label: initialBoothList[i].label});
+      app.booths.push({key: initialBoothList[i].key, label: initialBoothList[i].label});
     }
-    app.saveUnlockedBooths();
+    app.saveBooths();
   }
 
   if('serviceWorker' in navigator) {

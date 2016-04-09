@@ -23,41 +23,26 @@
   <header class="header">
     <h1 class="header__title">Bulldog Earth Day</h1>
     <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
-    <button id="butAdd" class="headerButton" aria-label="Add"></button>
+    <button id="butScan" class="headerButton" aria-label="Scan"></button>
   </header>
 
   <main class="main">
-    <div class="card cardTemplate weather-forecast" hidden>
-      <div class="city-key" hidden></div>
+    <div class="card cardTemplate booth" hidden>
+      <div class="booth-key" hidden></div>
+      <div class="icon"></div>
       <div class="location"></div>
-      <div class="date"></div>
       <div class="description"></div>
-      <div class="current">
-        <div class="visual">
-          <div class="icon"></div>
-        </div>
-        <div class="description">
-        </div>
-      </div>
     </div>
   </main>
 
   <div class="dialog-container">
     <div class="dialog">
-      <div class="dialog-title">Snapshot QR Code</div>
+      <div class="dialog-title">Scan Booth's QR Code</div>
       <div class="dialog-body">
-        <select id="selectCityToAdd">
-          <option value="austin">Austin, TX</option>
-          <option value="boston">Boston, MA</option>
-          <option value="chicago">Chicago, IL</option>
-          <option value="portland">Portland, OR</option>
-          <option value="sanfrancisco">San Francisco, CA</option>
-          <option value="seattle">Seattle, WA</option>
-        </select>
       </div>
       <div class="dialog-buttons">
-        <button id="butAddCity" class="button">Add</button>
-        <button id="butAddCancel" class="button">Cancel</button>
+        <button id="butScanQR" class="mdl-button mdl-button--primary">Scan</button>
+        <button id="butCancel" class="mdl-button">Cancel</button>
       </div>
     </div>
   </div>
@@ -68,6 +53,7 @@
     </svg>
   </div>
 
+  <script src="data/initial_booth_data.jsonp"></script>
   <script src="scripts/app.js" async></script>
   
 </body>

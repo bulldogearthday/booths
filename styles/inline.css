@@ -94,7 +94,7 @@ body {
     cursor: pointer; }
   .header #butRefresh {
     background: url(/images/ic_refresh_white_24px.svg) center center no-repeat; }
-  .header #butAdd {
+  .header #butScan {
     background: url(/images/ic_add_white_24px.svg) center center no-repeat; }
 
 .header__title {
@@ -238,90 +238,21 @@ body {
 .booth .location {
   font-size: 1.75em; }
 
-.booth .date, .booth .description {
+.booth .description {
   font-size: 1.25em; }
-
-.booth .current {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex; }
-  .booth .current .icon {
-    width: 128px;
-    height: 128px; }
-  .booth .current .visual {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    font-size: 4em; }
-    .booth .current .visual .scale {
-      font-size: 0.5em;
-      vertical-align: super; }
-  .booth .current .visual, .booth .current .description {
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1; }
-  .booth .current .feels-like:before {
-    content: "Feels like: ";
-    color: #888; }
-  .booth .current .wind:before {
-    content: "Wind: ";
-    color: #888; }
-  .booth .current .precip:before {
-    content: "Precipitation: ";
-    color: #888; }
-  .booth .current .humidity:before {
-    content: "Humidity: ";
-    color: #888; }
-  .booth .current .pollen:before {
-    content: "Pollen Count: ";
-    color: #888; }
-  .booth .current .pcount:before {
-    content: "Pollen ";
-    color: #888; }
-
-.booth .future {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex; }
-  .booth .future .oneday {
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
-    text-align: center; }
-    .booth .future .oneday .icon {
-      width: 64px;
-      height: 64px;
-      margin-left: auto;
-      margin-right: auto; }
-    .booth .future .oneday .temp-high, .booth .future .oneday .temp-low {
-      display: inline-block; }
-    .booth .future .oneday .temp-low {
-      color: #888; }
 
 .booth .icon {
   background-repeat: no-repeat;
   background-size: contain; }
-  .booth .icon.unlocked {
+  .booth .icon .unlocked {
     background-image: url("/images/star.png"); }
-  .booth .icon.locked {
+  .booth .icon .locked {
     background-image: url("/images/lock.png"); }
 
 @media (max-width: 450px) {
-  .booth .date, .booth .description {
+  .booth .description {
     font-size: 0.9em; }
-  .booth .current .icon {
-    width: 96px;
-    height: 96px; }
-  .booth .current .visual {
-    font-size: 3em; }
-  .booth .future .oneday .icon {
-    width: 32px;
-    height: 32px; } }
+  }
 
 .mdl-button {
   background: transparent;
