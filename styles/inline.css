@@ -244,9 +244,9 @@ body {
 .booth .icon {
   background-repeat: no-repeat;
   background-size: contain; }
-  .booth .icon .unlocked {
+  .booth .icon.unlocked {
     background-image: url("/images/star.png"); }
-  .booth .icon .locked {
+  .booth .icon.locked {
     background-image: url("/images/lock.png"); }
 
 @media (max-width: 450px) {

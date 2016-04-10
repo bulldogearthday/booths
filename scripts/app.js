@@ -3,6 +3,7 @@
   'use strict';
 
   var initialBoothList = initial_booth_data;  // From jsonp!
+  var public_key = null;
 
   var app = {
     hasRequestPending: false,
@@ -87,6 +88,11 @@
     }
   };
 
+  app.arrayHasOwnIndex = function(array, prop) {
+    return array.hasOwnProperty(prop) && /^0$|^[1-9]\d*$/.test(prop) &&
+        prop <= 4294967294; // 2^32 - 2 
+  }
+
 
   /*****************************************************************************
    *
@@ -138,9 +144,9 @@
 
   // Iterate all of the cards and attempt to get the latest booth data
   app.updateBooths = function() {
-    var keys = Object.keys(app.booths);
-    keys.forEach(function(key) {
-      app.getBooth(key);
+    app.booths.forEach(function(booth) {
+      if (!app.arrayHasOwnIndex(app.booths, booth))
+        app.getBooth(booth.key, booth.label);
     });
   };
 
@@ -166,14 +172,17 @@
   if (app.booths) {
     app.booths = JSON.parse(app.booths);
     app.booths.forEach(function(booth) {
-      app.getBooth(booth.key, booth.label);
+      if (!app.arrayHasOwnIndex(app.booths, booth))
+        app.getBooth(booth.key, booth.label);
     });
   } else {
     app.booths = [];
-    for(var i = 0; i < initialBoothList.length; i++) {
-      app.updateBoothCard(initialBoothList[i]);
-      app.booths.push({key: initialBoothList[i].key, label: initialBoothList[i].label});
-    }
+    initialBoothList.forEach(function(booth) {
+      if (!app.arrayHasOwnIndex(initialBoothList, booth)) {
+        app.updateBoothCard(booth);
+        app.booths.push(booth);
+      }
+    });
     app.saveBooths();
   }
 
