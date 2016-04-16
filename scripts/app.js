@@ -12,7 +12,9 @@
     spinner: document.querySelector('.loader'),
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
-    addDialog: document.querySelector('.dialog-container')
+    addDialog: document.querySelector('.dialog-container'),
+    videoWidth: 640,
+    videoHeight: 480
   };
 
 
@@ -39,12 +41,17 @@
     var videoElement = document.getElementById('qrVideo');
     videoElement.style.maxWidth = cRect.width + 'px';
     videoElement.style.maxHeight = cRect.height + 'px';
+    var photo = document.getElementById('qrPhoto');
+    photo.style.maxWidth = cRect.width + 'px';
+    photo.style.maxHeight = cRect.height + 'px';
     if (navigator.getUserMedia) {
       navigator.getUserMedia({audio: false, video: true},
-        function(stream) {
+        function(stream) {  // Success
+          document.getElementById('qrVideo').addEventListener('playing', app.saveVideoSize, false);
+          window.stream = stream;  // Making available to console
           videoElement.src = window.URL.createObjectURL(stream);
         },
-        function(e) {
+        function(e) {   // Error
           console.log('Video Rejected.', e);
         }
       );
@@ -53,11 +60,42 @@
     }
   });
 
+  app.saveVideoSize = function() {
+    if (!this.videoWidth) {
+      console.log('Video width is falsy');
+      app.videoWidth = 640;
+    } else {
+      app.videoWidth = this.videoWidth;
+    }
+    if (!this.videoHeight) {
+      console.log('Video height is falsy');
+      app.videoHeight = 480;
+    } else {
+      app.videoHeight = this.videoHeight;
+    }
+    // Mozilla may call this callback repeatedly, so unregister it after successful data acquisition
+    if (!!this.videoWidth && !!this.videoHeight)
+      document.getElementById('qrVideo').removeEventListener('playing', app.saveVideoSize, false);
+  }
+
   document.getElementById('butScanQR').addEventListener('click', function() {
-    app.toggleUnlockProcess(false);
+    var canvas = document.getElementById('qrCanvas');
+    canvas.width = app.videoWidth;
+    canvas.height = app.videoHeight;
+    var videoElement = document.getElementById('qrVideo');  // ?
+    canvas.getContext('2d').drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
+    var imageUrl = canvas.toDataURL('image/png');
+    var photo = document.getElementById('qrPhoto');
+    photo.setAttribute('src', imageUrl);
+    photo.removeAttribute('hidden');
+    videoElement.setAttribute('hidden', true);
+    window.stream.getVideoTracks()[0].stop();
+    //app.toggleUnlockProcess(false);
   });
 
   document.getElementById('butCancel').addEventListener('click', function() {
+    // Stop video stream
+    window.stream.getVideoTracks()[0].stop();
     // Close the scan QR dialog
     app.toggleUnlockProcess(false);
   });

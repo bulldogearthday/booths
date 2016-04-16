@@ -41,7 +41,12 @@
     <div class="dialog">
       <div class="dialog-title">Scan Booth's QR Code</div>
       <div class="dialog-body" id="qrDialogBody">
-        <video autoplay id="qrVideo"></video>        
+        <div class="videoSourceSelect" hidden>
+          <label for="videoSource">Video source: </label>
+          <select id="videoSource"></select>
+        </div>
+        <video muted autoplay id="qrVideo"></video>
+        <img id="qrPhoto" hidden></img>
       </div>
       <div class="dialog-buttons">
         <button id="butScanQR" class="mdl-button mdl-button--primary">Scan</button>
