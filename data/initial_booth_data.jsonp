@@ -2,22 +2,21 @@ initial_booth_data =
   [{
     "key": "freecycle",
     "label": "Freecycle",
-    "description": "Take stuff. Bring stuff. Waste less! Donate ahead of time or come to Earth Day to swap. All leftover items will be donated.",
+    "description": "Take stuff. Bring stuff. Waste less!",
     "certificate": null,
     "unlocked": false
   },
   {
     "key": "takebackthetap",
     "label": "Take Back The Tap Challenge",
-    "description": "Can you tell the difference between tap water and bottled water? Try the challenge to find out",
+    "description": "Can you tell the difference between tap water and bottled water?",
     "certificate": null,
     "unlocked": false
   },
   {
     "key": "diycandles",
     "label": "DIY Candles",
-    "description": "Create your own candles from recycled glass containers",
-    details: "We can provide the recycled materials, candles and fragrances for you",
+    "description": "Create your own candles from recycled jugs",
     "certificate": null,
     "unlocked": false
   },
@@ -25,7 +24,6 @@ initial_booth_data =
     "key": "diysoap",
     "label": "DIY Soap",
     "description": "Do it your own soap",
-    details: "We can provide the required materials and fragrances for you",
     "certificate": null,
     "unlocked": false
   },
@@ -33,15 +31,13 @@ initial_booth_data =
     "key": "diycleaningproducts",
     "label": "DIY Cleaning Products",
     "description": "Do it your own cleaning product",
-    details: "We can provide the required materials and fragrances for you",
     "certificate": null,
     "unlocked": false
   },
   {
     "key": "diynotebooks",
     "label": "DIY Notebooks",
-    "description": "Do it your own notebooks from recycled papers and materials",
-    details: "We can provide the recycled materials, papers needed",
+    "description": "Do it your own notebooks from recycled papers",
     "certificate": null,
     "unlocked": false
   }];
