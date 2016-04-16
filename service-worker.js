@@ -3,7 +3,7 @@ var cacheName = 'boothPWA';
 var filesToCache = [
   '/',
   '/index.html',
-  '/service-worker.js',
+  //'/service-worker.js',
   '/scripts/app.js',
   '/styles/inline.css',
   '/images/lock.png',

@@ -28,19 +28,32 @@
   });
 
   document.getElementById('butScan').addEventListener('click', function() {
-    // Initiate a QR Code snapshot process
     app.toggleUnlockProcess(true);
+    var dialogBody = document.getElementById('qrDialogBody');
+    var cRect = dialogBody.getClientRects()[0];
+    // Initiate a QR Code snapshot process
+    navigator.getUserMedia  = navigator.getUserMedia ||
+                              navigator.webkitGetUserMedia ||
+                              navigator.mozGetUserMedia ||
+                              navigator.msGetUserMedia;
+    var videoElement = document.getElementById('qrVideo');
+    videoElement.style.maxWidth = cRect.width + 'px';
+    videoElement.style.maxHeight = cRect.height + 'px';
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia({audio: false, video: true},
+        function(stream) {
+          videoElement.src = window.URL.createObjectURL(stream);
+        },
+        function(e) {
+          console.log('Video Rejected.', e);
+        }
+      );
+    } else {
+      //video.src = 'somevideo.webm'; // fallback.
+    }
   });
 
   document.getElementById('butScanQR').addEventListener('click', function() {
-    // Snapshot a QR code to unlock a booth
-    // var select = document.getElementById('selectCityToAdd');
-    // var selected = select.options[select.selectedIndex];
-    // var key = selected.value;
-    // var label = selected.textContent;
-    // app.getForecast(key, label);
-    // app.selectedCities.push({key: key, label: label});
-    // app.saveSelectedCities();
     app.toggleUnlockProcess(false);
   });
 

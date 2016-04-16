@@ -238,6 +238,7 @@ body {
 .booth.card {
   display: flex;
   flex-direction: row;
+  /*cursor: pointer;*/
 }
 
 .booth .booth-right-container {

@@ -40,7 +40,8 @@
   <div class="dialog-container">
     <div class="dialog">
       <div class="dialog-title">Scan Booth's QR Code</div>
-      <div class="dialog-body">
+      <div class="dialog-body" id="qrDialogBody">
+        <video autoplay id="qrVideo"></video>        
       </div>
       <div class="dialog-buttons">
         <button id="butScanQR" class="mdl-button mdl-button--primary">Scan</button>
@@ -48,6 +49,9 @@
       </div>
     </div>
   </div>
+
+  <canvas id="qrCanvas" hidden>
+  </canvas>
 
   <div class="loader">
     <svg viewBox="0 0 32 32" width="32" height="32">
