@@ -235,6 +235,17 @@ body {
   margin: 16px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
 
+.booth.card {
+  display: flex;
+  flex-direction: row;
+}
+
+.booth .booth-right-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+}
+
 .booth .location {
   font-size: 1.75em; }
 
@@ -244,6 +255,13 @@ body {
 .booth .icon {
   background-repeat: no-repeat;
   background-size: contain; }
+  .booth .icon.inflate {
+    min-width: 64px;
+    min-height: 64px;
+    max-width: 64px;
+    max-height: 64px;
+    width: 64px;
+    height: 64px; }
   .booth .icon.unlocked {
     background-image: url("/images/star.png"); }
   .booth .icon.locked {
@@ -252,6 +270,13 @@ body {
 @media (max-width: 450px) {
   .booth .description {
     font-size: 0.9em; }
+  .booth .icon.inflate {
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    width: 32px;
+    height: 32px; }
   }
 
 .mdl-button {
@@ -301,3 +326,7 @@ body {
   .mdl-button--primary.mdl-button--primary.mdl-button--raised, .mdl-button--primary.mdl-button--primary.mdl-button--fab {
     color: white;
     background-color: #3f51b5; }
+
+*[hidden] {
+    display: none !important;
+}

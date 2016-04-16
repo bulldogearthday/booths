@@ -65,25 +65,44 @@
     }
   };
 
+  app.indexBooth = function(key) {
+    app.booths.forEach(function(booth) {
+      if (!app.arrayHasOwnIndex(app.booths, booth) && booth.key == key)
+        return booth;
+    });
+  }
+
   // Updates a booth card with the latest booth information. If the card
   // doesn't already exist, it's cloned from the template.
   app.updateBoothCard = function(data) {
     if (!data)
       return;
-    var card = app.booths[data.key];
+    var card = app.indexBooth(data.key);
     if (!card) {
-      card = app.cardTemplate.cloneNode(true);
-      card.classList.remove('cardTemplate');
-      card.querySelector('.location').textContent = data.label;
-      card.removeAttribute('hidden');
-      app.container.appendChild(card);
-      app.booths[data.key] = card;
+      card = { 'key': data.key,
+               'label': data.label,
+               'description': data.description,
+               "certificate": null,
+               "unlocked": false
+              };
+      app.booths.push(card);
     }
-    card.querySelector('.description').textContent = data.description;
-    card.querySelector('.icon').classList.add(data.unlocked ? 'unlocked' : 'locked');
+    var cardNode = app.container.querySelector('.' + data.key);
+    if (!cardNode) {
+      cardNode = app.cardTemplate.cloneNode(true);
+      cardNode.classList.add(data.key);
+      cardNode.querySelector('.booth-key').textContent = data.key;
+      cardNode.classList.remove('cardTemplate');
+      cardNode.querySelector('.location').textContent = data.label;
+      cardNode.removeAttribute('hidden');
+      app.container.appendChild(cardNode);
+    }
+    cardNode.querySelector('.description').textContent = data.description;
+    cardNode.querySelector('.icon').classList.add(data.unlocked ? 'unlocked' : 'locked');
+    cardNode.querySelector('.icon').classList.add('inflate');
     if (app.isLoading) {
       app.spinner.setAttribute('hidden', true);
-      app.container.removeAttribute('hidden');
+      //app.container.removeAttribute('hidden');
       app.isLoading = false;
     }
   };
@@ -101,7 +120,7 @@
    ****************************************************************************/
 
   // Gets a info for a specific booth and update the card with the data
-  app.getBooth = function(key, label) {
+  app.getBooth = function(key, label, description) {
     var url = 'https://earthday.firebaseio.com/';
     url += key + '.json';
     if ('caches' in window) {
@@ -115,11 +134,22 @@
               if (json) {
                 json.key = key;
                 json.label = label;
+                json.description = description;
               }
               app.updateBoothCard(json);
             }
           });
+        } else if (app.booths != null) {
+          app.booths.forEach(function(booth) {
+            if (!app.arrayHasOwnIndex(app.booths, booth))
+              app.updateBoothCard(booth);
+          });
         }
+      });
+    } else if (app.booths != null) {
+      app.booths.forEach(function(booth) {
+        if (!app.arrayHasOwnIndex(app.booths, booth))
+          app.updateBoothCard(booth);
       });
     }
     // Make the XHR to get the data, then update the card
@@ -132,6 +162,7 @@
           if (response) {
             response.key = key;
             response.label = label;
+            response.description = description;
           }
           app.hasRequestPending = false;
           app.updateBoothCard(response);
@@ -146,7 +177,7 @@
   app.updateBooths = function() {
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth.key, booth.label);
+        app.getBooth(booth.key, booth.label, booth.description);
     });
   };
 
@@ -173,14 +204,14 @@
     app.booths = JSON.parse(app.booths);
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth.key, booth.label);
+        app.getBooth(booth.key, booth.label, booth.description);
     });
   } else {
     app.booths = [];
     initialBoothList.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(initialBoothList, booth)) {
         app.updateBoothCard(booth);
-        app.booths.push(booth);
+        // app.booths.push(booth);
       }
     });
     app.saveBooths();
