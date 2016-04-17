@@ -23,8 +23,7 @@
     publicKey: {
       n: "C4E3F7212602E1E396C0B6623CF11D26204ACE3E7D26685E037AD2507DCE82FC\n28F2D5F8A67FC3AFAB89A6D818D1F4C28CFA548418BD9F8E7426789A67E73E41",
       e: "10001",
-    },
-    qrReadIntervalId: 0
+    }
   };
 
 
@@ -116,21 +115,17 @@
   });
 
   app.saveVideoSize = function() {
-    //if (app.qrReadIntervalId === 0)
-    //  app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
     setTimeout(function() { app.scanQRCode() }, 500);
     if (app.videoSizeSaved && app.videoWidth && app.videoHeight) {
       app.scanQRCode();
       return;
     }
     if (!this.videoWidth) {
-      console.log('Video width is falsy');
       app.videoWidth = 640;
     } else {
       app.videoWidth = this.videoWidth;
     }
     if (!this.videoHeight) {
-      console.log('Video height is falsy');
       app.videoHeight = 480;
     } else {
       app.videoHeight = this.videoHeight;
@@ -139,26 +134,20 @@
     if (!!this.videoWidth && !!this.videoHeight) {
       document.getElementById('qrVideo').removeEventListener('playing', app.saveVideoSize, false);
       app.videoSizeSaved = true;
-      console.log("Video size: " + app.videoWidth + "x" + app.videoHeight);
     }
     app.scanQRCode();
   }
 
   app.readQRCode = function(qrCode) {
-    console.log('Read QR code: ' + qrCode);
     if (qrCode) {
       var rsa = new RSAKey();
       rsa.setPublic(app.publicKey.n, app.publicKey.e);
       var cleartext = rsa.decodeSign(qrCode);
       if (cleartext !== null) {
-        console.log("Decoded: " + cleartext);
         var booth = app.indexBooth(cleartext);
         if (booth) {
-          console.log("Booth found");
-          if (!booth.unlocked) {
-            console.log("Unlocking...");
+          if (!booth.unlocked)
             booth.unlocked = true;
-          }
           booth.certificate = qrCode;
           app.updateBoothCard(booth);
           app.saveBooths();
@@ -180,15 +169,17 @@
   }
 
   qrcode.callback = app.readQRCode;
+
   app.scanQRCode = function() {
-    console.log('Scan QR code...');
+    if (!app.unlockDialog.classList.contains('dialog-container--visible'))
+      return;
+
     var canvas = document.getElementById('qr-canvas');
     canvas.width = app.videoWidth;
     canvas.height = app.videoHeight;
     var videoElement = document.getElementById('qrVideo');
     var canvas2dContext = canvas.getContext('2d');
     canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
-    console.log("Video size 2: " + app.videoWidth + "x" + app.videoHeight);
     try {
       qrcode.decode();
     }
@@ -198,18 +189,6 @@
       setTimeout(function() { app.scanQRCode() }, 500);
     }
   }
-
-//   document.getElementById('butScanQR').addEventListener('click', function() {
-//     var canvas = document.getElementById('qr-canvas');
-//     canvas.width = app.videoWidth;
-//     canvas.height = app.videoHeight;
-//     var videoElement = document.getElementById('qrVideo');
-//     var canvas2dContext = canvas.getContext('2d');
-//     canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
-//     var imageData = canvas2dContext.getImageData(0, 0, app.videoWidth, app.videoHeight);
-
-//     var decoded = jsQR.decodeQRFromImage(imageData.data, imageData.width, imageData.height);
-//   });
 
   document.getElementById('butClose').addEventListener('click', function() {
     // Stop video stream
@@ -257,9 +236,9 @@
 
   app.toggleDialog = function(dialog, show) {
     if (show) {
-      dialog.classList.add('dialog-container--unlocked');
+      dialog.classList.add('dialog-container--visible');
     } else {
-      dialog.classList.remove('dialog-container--unlocked');
+      dialog.classList.remove('dialog-container--visible');
     }
   };
 
@@ -295,6 +274,11 @@
                "unlocked": false
               };
       app.booths.push(card);
+    } else {
+      card.label = data.label;
+      card.description = data.description;
+      if (data.certificate)
+        card.certificate = data.certificate;
     }
     var cardNode = app.container.querySelector('.' + data.key);
     if (!cardNode) {
@@ -306,13 +290,24 @@
       cardNode.removeAttribute('hidden');
       app.container.appendChild(cardNode);
     }
-    cardNode.querySelector('.description').textContent = data.description;
-    cardNode.querySelector('.icon').classList.remove(data.unlocked ? 'locked': 'unlocked');
-    cardNode.querySelector('.icon').classList.add(data.unlocked ? 'unlocked' : 'locked');
+
+    // Unlock check
+    var unlocked = false;
+    if (card.certificate) {
+        var rsa = new RSAKey();
+        rsa.setPublic(app.publicKey.n, app.publicKey.e);
+        var cleartext = rsa.decodeSign(card.certificate);
+        if (cleartext !== null && cleartext === card.key)
+          unlocked = true;
+    }
+    card.unlocked = unlocked;
+
+    cardNode.querySelector('.description').textContent = card.description;
+    cardNode.querySelector('.icon').classList.remove(card.unlocked ? 'locked': 'unlocked');
+    cardNode.querySelector('.icon').classList.add(card.unlocked ? 'unlocked' : 'locked');
     cardNode.querySelector('.icon').classList.add('inflate');
     if (app.isLoading) {
       app.spinner.setAttribute('hidden', true);
-      //app.container.removeAttribute('hidden');
       app.isLoading = false;
     }
   };
@@ -421,7 +416,6 @@
     initialBoothList.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(initialBoothList, booth)) {
         app.updateBoothCard(booth);
-        // app.booths.push(booth);
       }
     });
     app.saveBooths();
