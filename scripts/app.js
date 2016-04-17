@@ -274,10 +274,10 @@
   };
 
   app.indexBooth = function(key) {
-    app.booths.forEach(function(booth) {
-      if (!app.arrayHasOwnIndex(app.booths, booth) && booth.key == key)
-        return booth;
-    });
+    for(var i = 0; i < app.booths.length; i++) {
+      if (app.booths[i].key === key)
+        return app.booths[i];
+    }
     return null;
   }
 
