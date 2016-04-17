@@ -116,7 +116,8 @@
   });
 
   app.saveVideoSize = function() {
-    app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
+    if (app.qrReadIntervalId == 0)
+      app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
     if (app.videoSizeSaved && app.videoWidth && app.videoHeight)
       return;
     if (!this.videoWidth) {
