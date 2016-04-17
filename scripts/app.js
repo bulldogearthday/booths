@@ -148,9 +148,8 @@
     console.log('Read QR code: ' + qrCode);
     if (qrCode) {
       var rsa = new RSAKey();
-      var cyphertext = qrCode;
       rsa.setPublic(app.publicKey.n, app.publicKey.e);
-      var cleartext = rsa.decodeSign(cyphertext);
+      var cleartext = rsa.decodeSign(qrCode);
       if (cleartext != null) {
         console.log("Decoded: " + cleartext);
         var booth = app.indexBooth(cleartext);
@@ -160,7 +159,7 @@
             console.log("Unlocking...");
             booth.unlocked = true;
           }
-          booth.certificate = decoded;
+          booth.certificate = qrCode;
           updateBoothCard(cleartext);
           app.saveBooths();
           if (window.stream && window.stream.getVideoTracks)
