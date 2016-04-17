@@ -135,6 +135,7 @@
     if (!!this.videoWidth && !!this.videoHeight) {
       document.getElementById('qrVideo').removeEventListener('playing', app.saveVideoSize, false);
       app.videoSizeSaved = true;
+      console.log("Video size: " + app.videoWidth + "x" + app.videoHeight);
     }
   }
 
@@ -176,10 +177,12 @@
     var videoElement = document.getElementById('qrVideo');
     var canvas2dContext = canvas.getContext('2d');
     canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
+    console.log("Video size: " + app.videoWidth + "x" + app.videoHeight);
     try {
       qrcode.decode();
     }
     catch (e) {
+      console.log(e);
       app.unlockNote.textContent = 'Error while decoding. Keep going!';
     }
   }
