@@ -160,7 +160,7 @@
             booth.unlocked = true;
           }
           booth.certificate = qrCode;
-          app.updateBoothCard(cleartext);
+          app.updateBoothCard(booth);
           app.saveBooths();
           if (window.stream && window.stream.getVideoTracks)
             window.stream.getVideoTracks()[0].stop();
