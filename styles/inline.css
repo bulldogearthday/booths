@@ -44,7 +44,7 @@ body {
 
 .header {
   width: 100%;
-  height: 56px;
+  height: 68px;
   color: #FFF;
   background: #3F51B5;
   position: fixed;
@@ -81,8 +81,8 @@ body {
   transition: transform 0.233s cubic-bezier(0, 0, 0.21, 1) 0.1s, -webkit-transform 0.233s cubic-bezier(0, 0, 0.21, 1) 0.1s;
   z-index: 1000; }
   .header .headerButton {
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
     margin-right: 16px;
     text-indent: -30000px;
     overflow: hidden;
@@ -93,13 +93,15 @@ body {
     outline: none;
     cursor: pointer; }
   .header #butRefresh {
-    background: url(/images/ic_refresh_white_24px.svg) center center no-repeat; }
+    background: url(/images/icon_cloud_download.svg) center center no-repeat; }
   .header #butScan {
-    background: url(/images/ic_add_white_24px.svg) center center no-repeat; }
+    background: url(/images/icon_lock_rounded_open.svg) center center no-repeat; }
+  .header #butCheck {
+    background: url(/images/icon_checkered_flag.svg) center center no-repeat; }
 
 .header__title {
   font-weight: 400;
-  font-size: 20px;
+  font-size: 26px;
   margin: 0;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
@@ -330,4 +332,25 @@ body {
 
 *[hidden] {
     display: none !important;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -o-user-select: none;
+    -ms-user-select: none;       /* IE/Edge */
+    user-select: none;           /* non-prefixed version, currently
+                                    not supported by any browser */
+}
+
+.noselect input { 
+    -webkit-touch-callout: text;
+    -webkit-user-select: text; 
+    -khtml-user-select: text; 
+    -moz-user-select: text; 
+    -o-user-select: text; 
+    -ms-user-select: text;
+    user-select: text; 
 }

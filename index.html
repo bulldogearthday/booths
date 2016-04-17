@@ -21,12 +21,13 @@
 <body>
 
   <header class="header">
-    <h1 class="header__title">Bulldog Earth Day</h1>
+    <h1 class="header__title noselect">Bulldog Earth Day</h1>
     <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
     <button id="butScan" class="headerButton" aria-label="Scan"></button>
+    <button id="butCheck" class="headerButton" aria-label="Check"></button>
   </header>
 
-  <main class="main">
+  <main class="main noselect">
     <div class="card cardTemplate booth" hidden>
       <div class="booth-key" hidden></div>
       <div class="icon"></div>
@@ -37,7 +38,7 @@
     </div>
   </main>
 
-  <div class="dialog-container">
+  <div class="dialog-container unlock-dialog">
     <div class="dialog">
       <div class="dialog-title">Scan Booth's QR Code</div>
       <div class="dialog-body" id="qrDialogBody">
@@ -57,6 +58,18 @@
 
   <canvas id="qrCanvas" hidden>
   </canvas>
+
+  <div class="dialog-container check-dialog">
+    <div class="dialog">
+      <div class="dialog-title">Visited Booth Check</div>
+      <div class="dialog-body">
+        <span id="check-summary"></span>
+      </div>
+      <div class="dialog-buttons">
+        <button id="butOK" class="mdl-button">OK</button>
+      </div>
+    </div>
+  </div>
 
   <div class="loader">
     <svg viewBox="0 0 32 32" width="32" height="32">

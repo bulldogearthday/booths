@@ -3,13 +3,14 @@ var cacheName = 'boothPWA';
 var filesToCache = [
   '/',
   '/index.html',
-  //'/service-worker.js',
+  '/service-worker.js',
   '/scripts/app.js',
   '/styles/inline.css',
   '/images/lock.png',
   '/images/star.png',
-  '/images/ic_add_white_24px.svg',
-  '/images/ic_refresh_white_24px.svg'
+  '/images/icon_cloud_download.svg',
+  '/images/icon_lock_rounded_open.svg',
+  '/images/icon_checkered_flag.svg'
 ];
 
 self.addEventListener('install', function(e) {

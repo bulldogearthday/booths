@@ -12,7 +12,8 @@
     spinner: document.querySelector('.loader'),
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
-    addDialog: document.querySelector('.dialog-container'),
+    unlockDialog: document.querySelector('.unlock-dialog'),
+    checkDialog: document.querySelector('.check-dialog'),
     videoWidth: 640,
     videoHeight: 480
   };
@@ -30,7 +31,7 @@
   });
 
   document.getElementById('butScan').addEventListener('click', function() {
-    app.toggleUnlockProcess(true);
+    app.toggleUnlockDialog(true);
     var dialogBody = document.getElementById('qrDialogBody');
     var cRect = dialogBody.getClientRects()[0];
     // Initiate a QR Code snapshot process
@@ -90,16 +91,26 @@
     photo.removeAttribute('hidden');
     videoElement.setAttribute('hidden', true);
     window.stream.getVideoTracks()[0].stop();
-    //app.toggleUnlockProcess(false);
+    //app.toggleUnlockDialog(false);
   });
 
   document.getElementById('butCancel').addEventListener('click', function() {
     // Stop video stream
     window.stream.getVideoTracks()[0].stop();
     // Close the scan QR dialog
-    app.toggleUnlockProcess(false);
+    app.toggleUnlockDialog(false);
   });
 
+  document.getElementById('butCheck').addEventListener('click', function() {
+    app.toggleCheckDialog(true);
+    app.spinner.removeAttribute('hidden');
+    // TODO: check saved certificates and adjust unlocked states
+    app.spinner.setAttribute('hidden', true);
+  });
+
+  document.getElementById('butOK').addEventListener('click', function() {
+    app.toggleCheckDialog(false);
+  });
 
   /*****************************************************************************
    *
@@ -107,13 +118,22 @@
    *
    ****************************************************************************/
 
-  // Toggles the visibility of the QR snapshot dialog.
-  app.toggleUnlockProcess = function(unlocked) {
-    if (unlocked) {
-      app.addDialog.classList.add('dialog-container--unlocked');
+  app.toggleDialog = function(dialog, show) {
+    if (show) {
+      dialog.classList.add('dialog-container--unlocked');
     } else {
-      app.addDialog.classList.remove('dialog-container--unlocked');
+      dialog.classList.remove('dialog-container--unlocked');
     }
+  };
+
+  // Toggles the visibility of the QR scan dialog.
+  app.toggleUnlockDialog = function(show) {
+    app.toggleDialog(app.unlockDialog, show);
+  };
+
+  // Toggles the visibility of the QR scan dialog.
+  app.toggleCheckDialog = function(show) {
+    app.toggleDialog(app.checkDialog, show);
   };
 
   app.indexBooth = function(key) {
