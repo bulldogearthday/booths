@@ -116,10 +116,13 @@
   });
 
   app.saveVideoSize = function() {
-    if (app.qrReadIntervalId == 0)
-      app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
-    if (app.videoSizeSaved && app.videoWidth && app.videoHeight)
+    //if (app.qrReadIntervalId == 0)
+    //  app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
+    setTimeout(function() { app.scanQRCode() }, 500);
+    if (app.videoSizeSaved && app.videoWidth && app.videoHeight) {
+      app.scanQRCode();
       return;
+    }
     if (!this.videoWidth) {
       console.log('Video width is falsy');
       app.videoWidth = 640;
@@ -138,9 +141,12 @@
       app.videoSizeSaved = true;
       console.log("Video size: " + app.videoWidth + "x" + app.videoHeight);
     }
+    app.scanQRCode();
   }
 
   app.readQRCode = function(qrCode) {
+    console.log('Read QR code: ' + qrCode);
+    var success = false;
     if (qrCode) {
       var rsa = new RSAKey();
       var cyphertext = qrCode;
@@ -159,6 +165,7 @@
             window.stream.getVideoTracks()[0].stop();
           app.unlockNote.textContent = 'Successfully unlocked ' + booth.label + '!';
           //app.toggleUnlockDialog(false);
+          success = true;
         } else {
           app.unlockNote.textContent = 'QR code information problem. Keep going!';
         }
@@ -168,23 +175,27 @@
     } else {
       app.unlockNote.textContent = 'Could not decode QR code. Keep going!';
     }
+    if (!success)
+      setTimeout(function() { app.scanQRCode() }, 500);
   }
 
   qrcode.callback = app.readQRCode;
   app.scanQRCode = function() {
+    console.log('Scan QR code...');
     var canvas = document.getElementById('qr-canvas');
     canvas.width = app.videoWidth;
     canvas.height = app.videoHeight;
     var videoElement = document.getElementById('qrVideo');
     var canvas2dContext = canvas.getContext('2d');
     canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
-    console.log("Video size: " + app.videoWidth + "x" + app.videoHeight);
+    console.log("Video size 2: " + app.videoWidth + "x" + app.videoHeight);
     try {
       qrcode.decode();
     }
     catch (e) {
       console.log(e);
       app.unlockNote.textContent = 'Error while decoding. Keep going!';
+      setTimeout(function() { app.scanQRCode() }, 500);
     }
   }
 
