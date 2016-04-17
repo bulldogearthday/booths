@@ -14,6 +14,8 @@
     container: document.querySelector('.main'),
     unlockDialog: document.querySelector('.unlock-dialog'),
     checkDialog: document.querySelector('.check-dialog'),
+    videoSelect: document.querySelector('select#videoSource'),
+    gotVideoSourcesDone: false,
     videoWidth: 640,
     videoHeight: 480
   };
@@ -30,34 +32,76 @@
     app.updateBooths();
   });
 
-  document.getElementById('butScan').addEventListener('click', function() {
-    app.toggleUnlockDialog(true);
-    var dialogBody = document.getElementById('qrDialogBody');
-    var cRect = dialogBody.getClientRects()[0];
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                            navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia ||
+                            navigator.msGetUserMedia;
+  var dialogBody = document.getElementById('qrDialogBody');
+  var cRect = dialogBody.getClientRects()[0];
+  var videoElement = document.getElementById('qrVideo');
+  videoElement.style.maxWidth = cRect.width + 'px';
+  videoElement.style.maxHeight = cRect.height + 'px';
+
+  app.startVideoStream = function() {
+    if (window.stream && window.stream.getVideoTracks)
+        window.stream.getVideoTracks()[0].stop();
     // Initiate a QR Code snapshot process
-    navigator.getUserMedia  = navigator.getUserMedia ||
-                              navigator.webkitGetUserMedia ||
-                              navigator.mozGetUserMedia ||
-                              navigator.msGetUserMedia;
-    var videoElement = document.getElementById('qrVideo');
-    videoElement.style.maxWidth = cRect.width + 'px';
-    videoElement.style.maxHeight = cRect.height + 'px';
-    var photo = document.getElementById('qrPhoto');
-    photo.style.maxWidth = cRect.width + 'px';
-    photo.style.maxHeight = cRect.height + 'px';
     if (navigator.getUserMedia) {
-      navigator.getUserMedia({audio: false, video: true},
+      var selectedVideoSource = app.videoSelect.value;
+      var videoOption = {video: true};
+      if (!!selectedVideoSource)
+        videoOption.video = {
+          optional: [{
+            sourceId: selectedVideoSource
+          }]
+        };
+      navigator.getUserMedia(videoOption,
         function(stream) {  // Success
           document.getElementById('qrVideo').addEventListener('playing', app.saveVideoSize, false);
           window.stream = stream;  // Making available to console
           videoElement.src = window.URL.createObjectURL(stream);
         },
         function(e) {   // Error
-          console.log('Video Rejected.', e);
+          unlockNote.textContent = 'Video Rejected.';
         }
       );
     } else {
-      //video.src = 'somevideo.webm'; // fallback.
+      unlockNote.textContent = 'This browser doesn not support getUserMedia. Try Chrome.';
+    }
+  }
+
+  app.videoSelect.onchange = app.startVideoStream;
+
+  app.gotVideoSources = function (sourceInfos) {
+    for (var i = 0; i !== sourceInfos.length; ++i) {
+      var sourceInfo = sourceInfos[i];
+      var option = document.createElement('option');
+      option.value = sourceInfo.id;
+      if (sourceInfo.kind === 'video') {
+        option.text = sourceInfo.label || 'camera ' + (app.videoSelect.length + 1);
+        if (i == 0)
+          option.setAttribute('selected', true);
+        app.videoSelect.appendChild(option);
+      }
+    }
+    app.gotVideoSourcesDone = true;
+    app.startVideoStream();
+  }
+
+  document.getElementById('butScan').addEventListener('click', function() {
+    app.toggleUnlockDialog(true);
+    var unlockNote = document.getElementById('unlockNote');
+
+    if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
+      unlockNote.textContent = 'This browser does not support MediaStreamTrack. Try Chrome.';
+    } else {
+      if (!app.gotVideoSourcesDone) {
+        var videoSourceSelect = document.getElementById('videoSourceSelect');
+        videoSourceSelect.removeAttribute('hidden');
+        MediaStreamTrack.getSources(app.gotVideoSources);
+      } else {
+        app.startVideoStream();
+      }
     }
   });
 
@@ -86,17 +130,16 @@
     var videoElement = document.getElementById('qrVideo');  // ?
     canvas.getContext('2d').drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
     var imageUrl = canvas.toDataURL('image/png');
-    var photo = document.getElementById('qrPhoto');
-    photo.setAttribute('src', imageUrl);
-    photo.removeAttribute('hidden');
-    videoElement.setAttribute('hidden', true);
-    window.stream.getVideoTracks()[0].stop();
+    // TODO: scan qr data here
+    if (window.stream && window.stream.getVideoTracks)
+        window.stream.getVideoTracks()[0].stop();
     //app.toggleUnlockDialog(false);
   });
 
   document.getElementById('butCancel').addEventListener('click', function() {
     // Stop video stream
-    window.stream.getVideoTracks()[0].stop();
+    if (window.stream && window.stream.getVideoTracks)
+        window.stream.getVideoTracks()[0].stop();
     // Close the scan QR dialog
     app.toggleUnlockDialog(false);
   });
