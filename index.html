@@ -50,13 +50,13 @@
         <span id="unlockNote"></span>
       </div>
       <div class="dialog-buttons">
-        <button id="butScanQR" class="mdl-button mdl-button--primary">Scan</button>
-        <button id="butCancel" class="mdl-button">Cancel</button>
+        <!--<button id="butScanQR" class="mdl-button mdl-button--primary">Scan</button>-->
+        <button id="butClose" class="mdl-button">Close</button>
       </div>
     </div>
   </div>
 
-  <canvas id="qrCanvas" hidden>
+  <canvas id="qr-canvas" hidden>
   </canvas>
 
   <div class="dialog-container check-dialog">
@@ -78,11 +78,31 @@
   </div>
 
   <script src="data/initial_booth_data.jsonp"></script>
-  <script src="scripts/jsQR.js" async></script>
-  <script src="jsbn.js"></script>
-  <script src="jsbn2.js" async></script>
-  <script src="rsa.js"></script>
-  <script src="rsa2.js" async></script>
-  <script src="scripts/app.js" async></script>
+  <!--<script type="text/javascript" src="scripts/jsQR.js" async></script>-->
+
+  <script type="text/javascript" src="scripts/qr/grid.js"></script>
+  <script type="text/javascript" src="scripts/qr/version.js"></script>
+  <script type="text/javascript" src="scripts/qr/detector.js"></script>
+  <script type="text/javascript" src="scripts/qr/formatinf.js"></script>
+  <script type="text/javascript" src="scripts/qr/errorlevel.js"></script>
+  <script type="text/javascript" src="scripts/qr/bitmat.js"></script>
+  <script type="text/javascript" src="scripts/qr/datablock.js"></script>
+  <script type="text/javascript" src="scripts/qr/bmparser.js"></script>
+  <script type="text/javascript" src="scripts/qr/datamask.js"></script>
+  <script type="text/javascript" src="scripts/qr/rsdecoder.js"></script>
+  <script type="text/javascript" src="scripts/qr/gf256poly.js"></script>
+  <script type="text/javascript" src="scripts/qr/gf256.js"></script>
+  <script type="text/javascript" src="scripts/qr/decoder.js"></script>
+  <script type="text/javascript" src="scripts/qr/qrcode.js"></script>
+  <script type="text/javascript" src="scripts/qr/findpat.js"></script>
+  <script type="text/javascript" src="scripts/qr/alignpat.js"></script>
+  <script type="text/javascript" src="scripts/qr/databr.js"></script>
+
+  <script type="text/javascript" src="scripts/rsa/jsbn.js"></script>
+  <script type="text/javascript" src="scripts/rsa/jsbn2.js" async></script>
+  <script type="text/javascript" src="scripts/rsa/rsa.js"></script>
+  <script type="text/javascript" src="scripts/rsa/rsa2.js" async></script>
+
+  <script type="text/javascript" src="scripts/app.js" async></script>
 </body>
 </html>
