@@ -98,6 +98,7 @@
     if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
       unlockNote.textContent = 'This browser does not support MediaStreamTrack. Try Chrome.';
     } else {
+      unlockNote.textContent = 'Press the SCAN button for scan.';
       if (!app.gotVideoSourcesDone) {
         var videoSourceSelect = document.getElementById('videoSourceSelect');
         videoSourceSelect.removeAttribute('hidden');
