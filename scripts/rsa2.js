@@ -121,6 +121,14 @@ function RSADecrypt(ctext) {
 //  if(h) return this.decrypt(h); else return null;
 //}
 
+function RSASign(ctext) {
+  var c = pkcs1pad2(ctext,(this.n.bitLength()+7)>>3);
+  var m = this.doPrivate(c);
+  if(m == null) return null;
+  var h = m.toString(16);
+  if((h.length & 1) == 0) return h; else return "0" + h;
+}
+
 // protected
 RSAKey.prototype.doPrivate = RSADoPrivate;
 
@@ -130,3 +138,5 @@ RSAKey.prototype.setPrivateEx = RSASetPrivateEx;
 RSAKey.prototype.generate = RSAGenerate;
 RSAKey.prototype.decrypt = RSADecrypt;
 //RSAKey.prototype.b64_decrypt = RSAB64Decrypt;
+RSAKey.prototype.sign = RSASign;
+

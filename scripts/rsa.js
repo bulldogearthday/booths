@@ -103,6 +103,14 @@ function RSAEncrypt(text) {
 //  if(h) return hex2b64(h); else return null;
 //}
 
+// Return the PKCS#1 RSA encryption of "text" as an even-length hex string
+function RSADecodeSign(ctext) {
+  var c = parseBigInt(ctext, 16);
+  var m = this.doPublic(c);
+  if(m == null) return null;
+  return pkcs1unpad2(m, (this.n.bitLength()+7)>>3);
+}
+
 // protected
 RSAKey.prototype.doPublic = RSADoPublic;
 
@@ -110,3 +118,4 @@ RSAKey.prototype.doPublic = RSADoPublic;
 RSAKey.prototype.setPublic = RSASetPublic;
 RSAKey.prototype.encrypt = RSAEncrypt;
 //RSAKey.prototype.encrypt_b64 = RSAEncryptB64;
+RSAKey.prototype.decodeSign = RSADecodeSign;
