@@ -18,7 +18,11 @@
     gotVideoSourcesDone: false,
     videoWidth: 640,
     videoHeight: 480,
-    videoSizeSaved: false
+    videoSizeSaved: false,
+    publicKey: {
+      n: "C4E3F7212602E1E396C0B6623CF11D26204ACE3E7D26685E037AD2507DCE82FC\n28F2D5F8A67FC3AFAB89A6D818D1F4C28CFA548418BD9F8E7426789A67E73E41",
+      e: "10001",
+    }
   };
 
 
@@ -141,13 +145,32 @@
     var imageData = canvas2dContext.getImageData(0, 0, app.videoWidth, app.videoHeight);
 
     var decoded = jsQR.decodeQRFromImage(imageData.data, imageData.width, imageData.height);
+    var unlockNote = document.getElementById('unlockNote');
     if (decoded) {
-      alert(decoded);
-      if (window.stream && window.stream.getVideoTracks)
-        window.stream.getVideoTracks()[0].stop();
-      app.toggleUnlockDialog(false);
+      // Handle the QR here
+      var rsa = new RSAKey();
+      var cyphertext = decoded;
+      rsa.setPublic(app.publicKey.n, app.publicKey.e);
+      var cleartext = rsa.decodeSign(cyphertext);
+      if (cleartext != null) {
+        var booth = app.indexBooth(cleartext);
+        if (booth) {
+          if (!booth.unlocked) {
+            booth.unlocked = true;
+            updateBoothCard(cleartext);
+          }
+          booth.certificate = decoded;
+          app.saveBooths();
+          if (window.stream && window.stream.getVideoTracks)
+            window.stream.getVideoTracks()[0].stop();
+          app.toggleUnlockDialog(false);
+        } else {
+          unlockNote.textContent = 'QR code information problem. Please try again.';
+        }
+      } else {
+        unlockNote.textContent = 'QR code information problem. Please try again.';
+      }
     } else {
-      var unlockNote = document.getElementById('unlockNote');
       unlockNote.textContent = 'Could not decode QR code. Please try again.';
     }
   });
@@ -163,7 +186,21 @@
   document.getElementById('butCheck').addEventListener('click', function() {
     app.toggleCheckDialog(true);
     app.spinner.removeAttribute('hidden');
-    // TODO: check saved certificates and adjust unlocked states
+    // Check saved certificates and adjust unlocked states
+    app.booths.forEach(function(booth) {
+      if (!app.arrayHasOwnIndex(app.booths, booth)) {
+        var unlocked = false;
+        var rsa = new RSAKey();
+        var cyphertext = booth.certificate;
+        rsa.setPublic(app.publicKey.n, app.publicKey.e);
+        var cleartext = rsa.decodeSign(cyphertext);
+        if (cleartext != null && cleartext === booth.key)
+          unlocked = true;
+        booth.unlocked = unlocked;
+        updateBoothCard(booth.key);
+      }
+    });
+    app.saveBooths();
     app.spinner.setAttribute('hidden', true);
   });
 
@@ -200,6 +237,7 @@
       if (!app.arrayHasOwnIndex(app.booths, booth) && booth.key == key)
         return booth;
     });
+    return null;
   }
 
   // Updates a booth card with the latest booth information. If the card
@@ -228,6 +266,7 @@
       app.container.appendChild(cardNode);
     }
     cardNode.querySelector('.description').textContent = data.description;
+    cardNode.querySelector('.icon').classList.remove(data.unlocked ? 'locked': 'unlocked');
     cardNode.querySelector('.icon').classList.add(data.unlocked ? 'unlocked' : 'locked');
     cardNode.querySelector('.icon').classList.add('inflate');
     if (app.isLoading) {
