@@ -146,37 +146,38 @@
 
   app.readQRCode = function(qrCode) {
     console.log('Read QR code: ' + qrCode);
-    var success = false;
     if (qrCode) {
       var rsa = new RSAKey();
       var cyphertext = qrCode;
       rsa.setPublic(app.publicKey.n, app.publicKey.e);
       var cleartext = rsa.decodeSign(cyphertext);
       if (cleartext != null) {
+        console.log("Decoded: " + cleartext);
         var booth = app.indexBooth(cleartext);
         if (booth) {
+          console.log("Booth found");
           if (!booth.unlocked) {
+            console.log("Unlocking...");
             booth.unlocked = true;
-            updateBoothCard(cleartext);
           }
           booth.certificate = decoded;
+          updateBoothCard(cleartext);
           app.saveBooths();
           if (window.stream && window.stream.getVideoTracks)
             window.stream.getVideoTracks()[0].stop();
           app.unlockNote.textContent = 'Successfully unlocked ' + booth.label + '!';
-          //app.toggleUnlockDialog(false);
-          success = true;
+          app.toggleUnlockDialog(false);
+          return;
         } else {
-          app.unlockNote.textContent = 'QR code information problem. Keep going!';
+          app.unlockNote.textContent = 'No booth found for this QR. Keep going!';
         }
       } else {
-        app.unlockNote.textContent = 'QR code information problem. Keep going!';
+        app.unlockNote.textContent = 'QR code decoding problem. Keep going!';
       }
     } else {
       app.unlockNote.textContent = 'Could not decode QR code. Keep going!';
     }
-    if (!success)
-      setTimeout(function() { app.scanQRCode() }, 500);
+    setTimeout(function() { app.scanQRCode() }, 500);
   }
 
   qrcode.callback = app.readQRCode;
