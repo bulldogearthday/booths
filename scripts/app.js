@@ -88,7 +88,7 @@
       option.value = sourceInfo.id;
       if (sourceInfo.kind === 'video') {
         option.text = sourceInfo.label || 'camera ' + (app.videoSelect.length + 1);
-        if (i == 0)
+        if (i === 0)
           option.setAttribute('selected', true);
         app.videoSelect.appendChild(option);
       }
@@ -116,7 +116,7 @@
   });
 
   app.saveVideoSize = function() {
-    //if (app.qrReadIntervalId == 0)
+    //if (app.qrReadIntervalId === 0)
     //  app.qrReadIntervalId = setInterval(app.scanQRCode(), 500);
     setTimeout(function() { app.scanQRCode() }, 500);
     if (app.videoSizeSaved && app.videoWidth && app.videoHeight) {
@@ -150,7 +150,7 @@
       var rsa = new RSAKey();
       rsa.setPublic(app.publicKey.n, app.publicKey.e);
       var cleartext = rsa.decodeSign(qrCode);
-      if (cleartext != null) {
+      if (cleartext !== null) {
         console.log("Decoded: " + cleartext);
         var booth = app.indexBooth(cleartext);
         if (booth) {
@@ -160,7 +160,7 @@
             booth.unlocked = true;
           }
           booth.certificate = qrCode;
-          updateBoothCard(cleartext);
+          app.updateBoothCard(cleartext);
           app.saveBooths();
           if (window.stream && window.stream.getVideoTracks)
             window.stream.getVideoTracks()[0].stop();
@@ -230,14 +230,15 @@
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth)) {
         var unlocked = false;
-        var rsa = new RSAKey();
-        var cyphertext = booth.certificate;
-        rsa.setPublic(app.publicKey.n, app.publicKey.e);
-        var cleartext = rsa.decodeSign(cyphertext);
-        if (cleartext != null && cleartext === booth.key)
-          unlocked = true;
+        if (booth.certificate) {
+          var rsa = new RSAKey();
+          rsa.setPublic(app.publicKey.n, app.publicKey.e);
+          var cleartext = rsa.decodeSign(booth.certificate);
+          if (cleartext !== null && cleartext === booth.key)
+            unlocked = true;
+        }
         booth.unlocked = unlocked;
-        updateBoothCard(booth.key);
+        app.updateBoothCard(booth);
       }
     });
     app.saveBooths();
@@ -348,14 +349,14 @@
               app.updateBoothCard(json);
             }
           });
-        } else if (app.booths != null) {
+        } else if (app.booths !== null) {
           app.booths.forEach(function(booth) {
             if (!app.arrayHasOwnIndex(app.booths, booth))
               app.updateBoothCard(booth);
           });
         }
       });
-    } else if (app.booths != null) {
+    } else if (app.booths !== null) {
       app.booths.forEach(function(booth) {
         if (!app.arrayHasOwnIndex(app.booths, booth))
           app.updateBoothCard(booth);
