@@ -5,6 +5,7 @@ var filesToCache = [
   '/index.html',
   '/service-worker.js',
   '/scripts/app.js',
+  '/scripts/jsQR.js',
   '/styles/inline.css',
   '/images/lock.png',
   '/images/star.png',

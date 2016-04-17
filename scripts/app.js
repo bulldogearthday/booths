@@ -17,7 +17,8 @@
     videoSelect: document.querySelector('select#videoSource'),
     gotVideoSourcesDone: false,
     videoWidth: 640,
-    videoHeight: 480
+    videoHeight: 480,
+    videoSizeSaved: false
   };
 
 
@@ -45,6 +46,7 @@
   app.startVideoStream = function() {
     if (window.stream && window.stream.getVideoTracks)
         window.stream.getVideoTracks()[0].stop();
+    app.videoSizeSaved = false;
     // Initiate a QR Code snapshot process
     if (navigator.getUserMedia) {
       var selectedVideoSource = app.videoSelect.value;
@@ -90,6 +92,7 @@
 
   document.getElementById('butScan').addEventListener('click', function() {
     app.toggleUnlockDialog(true);
+    app.videoSizeSaved = false;
     var unlockNote = document.getElementById('unlockNote');
 
     if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
@@ -106,6 +109,8 @@
   });
 
   app.saveVideoSize = function() {
+    if (app.videoSizeSaved && app.videoWidth && app.videoHeight)
+      return;
     if (!this.videoWidth) {
       console.log('Video width is falsy');
       app.videoWidth = 640;
@@ -119,21 +124,31 @@
       app.videoHeight = this.videoHeight;
     }
     // Mozilla may call this callback repeatedly, so unregister it after successful data acquisition
-    if (!!this.videoWidth && !!this.videoHeight)
+    if (!!this.videoWidth && !!this.videoHeight) {
       document.getElementById('qrVideo').removeEventListener('playing', app.saveVideoSize, false);
+      app.videoSizeSaved = true;
+    }
   }
 
   document.getElementById('butScanQR').addEventListener('click', function() {
     var canvas = document.getElementById('qrCanvas');
     canvas.width = app.videoWidth;
     canvas.height = app.videoHeight;
-    var videoElement = document.getElementById('qrVideo');  // ?
-    canvas.getContext('2d').drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
-    var imageUrl = canvas.toDataURL('image/png');
-    // TODO: scan qr data here
-    if (window.stream && window.stream.getVideoTracks)
+    var videoElement = document.getElementById('qrVideo');
+    var canvas2dContext = canvas.getContext('2d');
+    canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
+    var imageData = canvas2dContext.getImageData(0, 0, app.videoWidth, app.videoHeight);
+
+    var decoded = jsQR.decodeQRFromImage(imageData.data, imageData.width, imageData.height);
+    if (decoded) {
+      alert(decoded);
+      if (window.stream && window.stream.getVideoTracks)
         window.stream.getVideoTracks()[0].stop();
-    //app.toggleUnlockDialog(false);
+      app.toggleUnlockDialog(false);
+    } else {
+      var unlockNote = document.getElementById('unlockNote');
+      unlockNote.textContent = 'Could not decode QR code. Please try again.';
+    }
   });
 
   document.getElementById('butCancel').addEventListener('click', function() {
