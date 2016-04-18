@@ -4,6 +4,7 @@ A Progressive Web App for paperless booth visit provisioning.
 ## Usage
 * Define booth list on the firebase backend, and also provide the same data in the off-line default store (jsonp file)
 * Generate RSA public/private keypair at http://www-cs-students.stanford.edu/~tjw/jsbn/rsa2.html
+* RSA library is extended with sign/decodeSign capability to accomodate our use-case
 * Encode booth key for each booth and generate QR codes for them
 * Distribute the QR codes
 * Make sure the visitors only see the booth's QR code when they completed the booth's quest
@@ -15,7 +16,8 @@ A Progressive Web App for paperless booth visit provisioning.
 * The user can take a picture of the specific QR code of a booth. The QR code will cryptographically prove that the individual visited the booth
 * Using getUserMedia for visual capture (see e.g. https://github.com/samdutton/simpl/tree/gh-pages/getusermedia)
 * Using MediaStreamTrack for video source selection (https://github.com/samdutton/simpl/tree/gh-pages/getusermedia/sources)
-* Using jsQR for QR scanning (https://github.com/cozmo/jsQR)
+* ~~Using jsQR for QR scanning (https://github.com/cozmo/jsQR)~~
+* Using Lazar Laszlo's https://github.com/LazarSoft/jsqrcode
 * Using http://www-cs-students.stanford.edu/~tjw/jsbn/ for RSA encryption/decription
 * The App should be able to operate off-line from cached data
 * Firebase backend provides booth data
@@ -26,5 +28,5 @@ A Progressive Web App for paperless booth visit provisioning.
 * Minimize JS and even code to make cheating harder
 * Minimize all assets (smaller icon data, minimize CSS too) for decrease load time and better bandwidth
 * Inline everything together for faster experience
-* QR code would read automatically and no SCAN button needed
-* Improve cross-platform and cross-browser coverage
+* ~~QR code would read automatically and no SCAN button needed~~
+* Improve cross-platform and cross-browser coverage - improved, but there's always more space for improvement
