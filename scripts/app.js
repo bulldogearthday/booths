@@ -103,7 +103,7 @@
     if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
       app.unlockNote.textContent = 'This browser does not support MediaStreamTrack. Try Chrome.';
     } else {
-      app.unlockNote.textContent = 'Press the SCAN button for scan.';
+      app.unlockNote.textContent = 'Locate the QR code with the camera.';
       if (!app.gotVideoSourcesDone) {
         var videoSourceSelect = document.getElementById('videoSourceSelect');
         videoSourceSelect.removeAttribute('hidden');
