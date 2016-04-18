@@ -6,8 +6,6 @@ var filesToCache = [
   '/service-worker.js',
   '/scripts/app.js',
 
-  //'/scripts/jsQR.js',
-
   'scripts/qr/grid.js',
   'scripts/qr/version.js',
   'scripts/qr/detector.js',
