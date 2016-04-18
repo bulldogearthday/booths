@@ -101,7 +101,8 @@
     app.videoSizeSaved = false;
 
     if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
-      app.unlockNote.textContent = 'This browser does not support MediaStreamTrack. Try Chrome.';
+      app.unlockNote.textContent = 'Try Chrome if you want to switch to the other camera.';
+      app.startVideoStream();
     } else {
       app.unlockNote.textContent = 'Locate the QR code with the camera.';
       if (!app.gotVideoSourcesDone) {
