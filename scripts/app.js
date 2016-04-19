@@ -207,15 +207,20 @@
     app.toggleCheckDialog(true);
     app.spinner.removeAttribute('hidden');
     // Check saved certificates and adjust unlocked states
+    var unlockedCount = 0;
+    var totalCount = 0;
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth)) {
+        totalCount++;
         var unlocked = false;
         if (booth.certificate) {
           var rsa = new RSAKey();
           rsa.setPublic(app.publicKey.n, app.publicKey.e);
           var cleartext = rsa.decodeSign(booth.certificate);
-          if (cleartext !== null && cleartext === booth.key)
+          if (cleartext !== null && cleartext === booth.key) {
             unlocked = true;
+            unlockedCount++;
+          }
         }
         booth.unlocked = unlocked;
         app.updateBoothCard(booth);
@@ -223,6 +228,7 @@
     });
     app.saveBooths();
     app.spinner.setAttribute('hidden', true);
+    document.getElementById('totalCount').textContent = ('' + unlockedCount + ' out of ' + totalCount + ' is unlocked.');
   });
 
   document.getElementById('butOK').addEventListener('click', function() {
