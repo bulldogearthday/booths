@@ -35,7 +35,7 @@
 
   document.getElementById('butRefresh').addEventListener('click', function() {
     // Refresh all of the booths
-    app.updateBooths();
+    app.updateBooths(true);
   });
 
   navigator.getUserMedia  = navigator.getUserMedia ||
@@ -293,7 +293,8 @@
       cardNode.classList.add(data.key);
       cardNode.querySelector('.booth-key').textContent = data.key;
       cardNode.classList.remove('cardTemplate');
-      cardNode.querySelector('.location').textContent = data.label;
+      cardNode.querySelector('.label').textContent = data.label;
+      cardNode.querySelector('.description').textContent = data.description;
       cardNode.removeAttribute('hidden');
       app.container.appendChild(cardNode);
     }
@@ -309,6 +310,7 @@
     }
     card.unlocked = unlocked;
 
+    cardNode.querySelector('.label').textContent = card.label;
     cardNode.querySelector('.description').textContent = card.description;
     cardNode.querySelector('.icon').classList.remove(card.unlocked ? 'locked': 'unlocked');
     cardNode.querySelector('.icon').classList.add(card.unlocked ? 'unlocked' : 'locked');
@@ -332,10 +334,10 @@
    ****************************************************************************/
 
   // Gets a info for a specific booth and update the card with the data
-  app.getBooth = function(key, label, description) {
+  app.getBooth = function(boothRecord, preferDownload) {
     var url = 'https://earthday.firebaseio.com/';
-    url += key + '.json';
-    if ('caches' in window) {
+    url += boothRecord.key + '.json';
+    if ('caches' in window && !preferDownload) {
       caches.match(url).then(function(response) {
         if (response) {
           response.json().then(function(json) {
@@ -344,9 +346,9 @@
             if (app.hasRequestPending) {
               console.log('updated from cache');
               if (json) {
-                json.key = key;
-                json.label = label;
-                json.description = description;
+                json.key = boothRecord.key;
+                json.label = boothRecord.label;
+                json.description = boothRecord.description;
               }
               app.updateBoothCard(json);
             }
@@ -358,7 +360,7 @@
           });
         }
       });
-    } else if (app.booths !== null) {
+    } else if (app.booths !== null && !preferDownload) {
       app.booths.forEach(function(booth) {
         if (!app.arrayHasOwnIndex(app.booths, booth))
           app.updateBoothCard(booth);
@@ -371,11 +373,11 @@
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          if (response) {
-            response.key = key;
-            response.label = label;
-            response.description = description;
-          }
+          // if (response) {
+          //   response.key = boothRecord.key;
+          //   response.label = boothRecord.label;
+          //   response.description = boothRecord.description;
+          // }
           app.hasRequestPending = false;
           app.updateBoothCard(response);
         }
@@ -386,10 +388,10 @@
   };
 
   // Iterate all of the cards and attempt to get the latest booth data
-  app.updateBooths = function() {
+  app.updateBooths = function(preferDownload) {
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth.key, booth.label, booth.description);
+        app.getBooth(booth, preferDownload);
     });
   };
 
@@ -416,7 +418,7 @@
     app.booths = JSON.parse(app.booths);
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth.key, booth.label, booth.description);
+        app.getBooth(booth, false);
     });
   } else {
     app.booths = [];
