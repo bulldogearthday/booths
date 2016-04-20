@@ -76,7 +76,7 @@
         }
       );
     } else {
-      app.unlockNote.textContent = 'This browser doesn not support getUserMedia. Try Chrome or photo the QR code with your native camera app and use the upload button.';
+      app.unlockNote.textContent = 'Cannot access video with this browser. Try Chrome or use your native camera app and upload the photo of the QR code.';
       document.getElementById('qrVideo').setAttribute('hidden', true);
       document.getElementById('uploadContainer').removeAttribute('hidden');
     }
