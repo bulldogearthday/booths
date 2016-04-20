@@ -1,5 +1,5 @@
 # Booths
-A Progressive Web App for paperless booth visit provisioning.
+A Progressive Web App for paperless booth visit provisioning. Deployed to https://earthday.firebaseapp.com
 
 ## Usage
 * Define booth list on the firebase backend, and also provide the same data in the off-line default store (jsonp file)
@@ -24,6 +24,7 @@ A Progressive Web App for paperless booth visit provisioning.
 * The data is basically the list and properties of the booths
 
 ## TODO
+* Fallback for browser which doesn't support getUserMedia
 * Computation server side for better security
 * Minimize JS and even code to make cheating harder
 * Minimize all assets (smaller icon data, minimize CSS too) for decrease load time and better bandwidth
