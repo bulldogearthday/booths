@@ -71,12 +71,53 @@
         },
         function(e) {   // Error
           app.unlockNote.textContent = 'Video Rejected.';
+          document.getElementById('qrVideo').setAttribute('hidden', true);
+          document.getElementById('uploadContainer').removeAttribute('hidden');
         }
       );
     } else {
-      app.unlockNote.textContent = 'This browser doesn not support getUserMedia. Try Chrome.';
+      app.unlockNote.textContent = 'This browser doesn not support getUserMedia. Try Chrome or photo the QR code with your native camera app and use the upload button.';
+      document.getElementById('qrVideo').setAttribute('hidden', true);
+      document.getElementById('uploadContainer').removeAttribute('hidden');
     }
   }
+
+  function handleFileSelect(evt) {
+    var files = evt.target.files;
+    for (var i = 0, f; f = files[i]; i++) {
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+      var reader = new FileReader();
+      reader.onload = (function(theFile) {
+        return function(e) {
+          var img = new Image();
+          img.src = e.target.result;
+          // img.complete?
+
+          // var canvasContainer = document.getElementById('canvasContainer');
+          // canvasContainer.width = img.width + 10;
+          // canvasContainer.height = img.height + 10;
+          var canvas = document.getElementById('qr-canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          var canvas2dContext = canvas.getContext('2d');
+          canvas2dContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+
+          try {
+            qrcode.decode();
+          }
+          catch (e) {
+            console.log(e);
+            app.unlockNote.textContent = 'Error while decoding. Try another image!';
+          }
+        };
+      })(f);
+      reader.readAsDataURL(f);
+    }
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
   app.videoSelect.onchange = app.startVideoStream;
 
@@ -174,7 +215,7 @@
 
   qrcode.callback = app.readQRCode;
 
-  app.scanQRCode = function() {
+  app.scanQRCode = function(element, isVideo) {
     if (!app.unlockDialog.classList.contains('dialog-container--visible'))
       return;
 
@@ -184,13 +225,14 @@
     var videoElement = document.getElementById('qrVideo');
     var canvas2dContext = canvas.getContext('2d');
     canvas2dContext.drawImage(videoElement, 0, 0, app.videoWidth, app.videoHeight);
+
     try {
       qrcode.decode();
     }
     catch (e) {
       console.log(e);
       app.unlockNote.textContent = 'Error while decoding. Keep going!';
-      setTimeout(function() { app.scanQRCode() }, 500);
+      setTimeout(function() { app.scanQRCode(element, isVideo) }, 500);
     }
   }
 

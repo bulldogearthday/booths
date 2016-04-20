@@ -47,6 +47,9 @@
           <select id="videoSource"></select>
         </div>
         <video muted autoplay id="qrVideo"></video>
+        <div id="uploadContainer" hidden>
+          <input type="file" id="files" name="files[]" multiple />
+        </div>
         <span id="unlockNote"></span>
       </div>
       <div class="dialog-buttons">
@@ -55,8 +58,9 @@
     </div>
   </div>
 
-  <canvas id="qr-canvas" hidden>
-  </canvas>
+  <!--<div id="canvasContainer" hidden>-->
+    <canvas id="qr-canvas" hidden></canvas>
+  <!--</div>-->
 
   <div class="dialog-container check-dialog">
     <div class="dialog">
