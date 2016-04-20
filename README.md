@@ -24,7 +24,7 @@ A Progressive Web App for paperless booth visit provisioning. Deployed to https:
 * The data is basically the list and properties of the booths
 
 ## TODO
-* Fallback for browser which doesn't support getUserMedia
+* ~~Fallback for browser which doesn't support getUserMedia~~
 * Computation server side for better security
 * Minimize JS and even code to make cheating harder
 * Minimize all assets (smaller icon data, minimize CSS too) for decrease load time and better bandwidth
