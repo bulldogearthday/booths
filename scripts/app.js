@@ -215,7 +215,7 @@
 
   qrcode.callback = app.readQRCode;
 
-  app.scanQRCode = function(element, isVideo) {
+  app.scanQRCode = function() {
     if (!app.unlockDialog.classList.contains('dialog-container--visible'))
       return;
 
@@ -232,7 +232,7 @@
     catch (e) {
       console.log(e);
       app.unlockNote.textContent = 'Error while decoding. Keep going!';
-      setTimeout(function() { app.scanQRCode(element, isVideo) }, 500);
+      setTimeout(function() { app.scanQRCode() }, 500);
     }
   }
 
