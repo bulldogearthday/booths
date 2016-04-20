@@ -3,40 +3,36 @@
   {
     "key": "freecycle",
     "label": "Freecycle",
-    "description": "Take stuff. Bring stuff. Waste less! Donate ahead of time or come to Earth Day to swap. All leftover items will be donated."
+    "description": "Take stuff. Bring stuff. Waste less!"
   },
   "takebackthetap":
   {
     "key": "takebackthetap",
     "label": "Take Back The Tap Challenge",
-    "description": "Can you tell the difference between tap water and bottled water? Try the challenge to find out"
+    "description": "Any difference between tap water and bottled water?"
   },
   "diycandles":
   {
     "key": "diycandles",
     "label": "DIY Candles",
-    "description": "Create your own candles from recycled glass containers",
-    "details": "We can provide the recycled materials, candles and fragrances for you"
+    "description": "Create your own candles from recycled glass containers"
   },
   "diysoap":
   {
     "key": "diysoap",
-    "label": "DIY Soap",
-    "description": "Do it your own soap",
-    "details": "We can provide the required materials and fragrances for you"
+    "label": "Student Clubs",
+    "description": "Engage with student clubs, know their efforts"
   },
   "diycleaningproducts":
   {
     "key": "diycleaningproducts",
-    "label": "DIY Cleaning Products",
-    "description": "Do it your own cleaning product",
-    "details": "We can provide the required materials and fragrances for you"
+    "label": "Facilities",
+    "description": "Find out how facilities support sustainability"
   },
   "diynotebooks":
   {
     "key": "diynotebooks",
     "label": "DIY Notebooks",
-    "description": "Do it your own notebooks from recycled papers and materials",
-    "details": "We can provide the recycled materials, papers needed"
+    "description": "Do it your own notebooks from recycled materials"
   }
 }

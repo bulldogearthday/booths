@@ -9,7 +9,7 @@ initial_booth_data =
   {
     "key": "takebackthetap",
     "label": "Take Back The Tap Challenge",
-    "description": "Can you tell the difference between tap water and bottled water?",
+    "description": "Any difference between tap water and bottled water?",
     "certificate": null,
     "unlocked": false
   },
@@ -22,22 +22,22 @@ initial_booth_data =
   },
   {
     "key": "diysoap",
-    "label": "DIY Soap",
-    "description": "Do it your own soap",
+    "label": "Student Clubs",
+    "description": "Engage with student clubs, know their efforts",
     "certificate": null,
     "unlocked": false
   },
   {
     "key": "diycleaningproducts",
-    "label": "DIY Cleaning Products",
-    "description": "Do it your own cleaning product",
+    "label": "Facilities",
+    "description": "Find out how facilities support sustainability",
     "certificate": null,
     "unlocked": false
   },
   {
     "key": "diynotebooks",
     "label": "DIY Notebooks",
-    "description": "Do it your own notebooks from recycled papers",
+    "description": "Do it your own notebooks from recycled materials",
     "certificate": null,
     "unlocked": false
   }];
