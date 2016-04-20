@@ -96,7 +96,7 @@
     app.startVideoStream();
   }
 
-  document.getElementById('butScan').addEventListener('click', function() {
+  app.qrScanClickHandler = function () {
     app.toggleUnlockDialog(true);
     app.videoSizeSaved = false;
 
@@ -113,7 +113,10 @@
         app.startVideoStream();
       }
     }
-  });
+  }
+
+  app.container.addEventListener('click', app.qrScanClickHandler);
+  document.getElementById('butScan').addEventListener('click', app.qrScanClickHandler);
 
   app.saveVideoSize = function() {
     setTimeout(function() { app.scanQRCode() }, 500);
@@ -228,7 +231,7 @@
     });
     app.saveBooths();
     app.spinner.setAttribute('hidden', true);
-    document.getElementById('totalCount').textContent = ('' + unlockedCount + ' out of ' + totalCount + ' is unlocked.');
+    document.getElementById('check-summary').textContent = ('' + unlockedCount + ' out of ' + totalCount + ' is unlocked.');
   });
 
   document.getElementById('butOK').addEventListener('click', function() {
