@@ -95,9 +95,6 @@
           img.src = e.target.result;
           // img.complete?
 
-          // var canvasContainer = document.getElementById('canvasContainer');
-          // canvasContainer.width = img.width + 10;
-          // canvasContainer.height = img.height + 10;
           var canvas = document.getElementById('qr-canvas');
           canvas.width = img.width;
           canvas.height = img.height;
