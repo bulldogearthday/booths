@@ -5,7 +5,7 @@ var filesToCache = [
   '/index.html',
 
   '/scripts/app.js',
-  'scripts/qr/qrdecoder.js',
+  '/scripts/qrdecoder.js',
   '/scripts/rsa.js',
 
   '/styles/inline.css',
