@@ -3,7 +3,6 @@ var cacheName = 'boothPWA';
 var filesToCache = [
   '/',
   '/index.html',
-  '/service-worker.js',
 
   '/scripts/app.js',
   'scripts/qr/qrdecoder.js',
