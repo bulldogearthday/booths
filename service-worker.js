@@ -1,5 +1,5 @@
-var dataCacheName = 'boothData-v1';
-var cacheName = 'boothPWA';
+var dataCacheName = 'boothData-v2';
+var cacheName = 'boothPWA2';
 var filesToCache = [
   '/',
   '/index.html',
@@ -7,6 +7,8 @@ var filesToCache = [
   '/scripts/app.js',
   '/scripts/qrdecoder.js',
   '/scripts/rsa.js',
+
+  '/data/initial_data.jsonp',
 
   '/styles/inline.css',
   '/images/lock.png',

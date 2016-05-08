@@ -1,0 +1,50 @@
+initial_data = {
+  "booths": [
+    {
+      "key": "a786fcfd-1475-440e-95eb-6aaeb1049ca3",
+      "label": "Freecycle",
+      "description": "Take stuff. Bring stuff. Waste less!",
+      "certificate": null,
+      "unlocked": false
+    },
+    {
+      "key": "a91d699d-9ba8-4d1b-bb89-04add3d95402",
+      "label": "Take Back The Tap Challenge",
+      "description": "Any difference between tap water and bottled water?",
+      "certificate": null,
+      "unlocked": false
+    },
+    {
+      "key": "fba05702-2c48-4542-9882-171a8ec74e5e",
+      "label": "DIY Candles",
+      "description": "Create your own candles from recycled jugs",
+      "certificate": null,
+      "unlocked": false
+    },
+    {
+      "key": "eabe5746-91f9-4ffd-87f2-6ca1ac8761ab",
+      "label": "Student Clubs",
+      "description": "Engage with student clubs, know their efforts",
+      "certificate": null,
+      "unlocked": false
+    },
+    {
+      "key": "b8a33c73-4a1e-4bf3-9eba-7dc3f093c226",
+      "label": "Facilities",
+      "description": "Find out how facilities support sustainability",
+      "certificate": null,
+      "unlocked": false
+    },
+    {
+      "key": "f49dd6b1-cd67-4967-8ab8-ff80ee0d7ab6",
+      "label": "DIY Notebooks",
+      "description": "Do it your own notebooks from recycled materials",
+      "certificate": null,
+      "unlocked": false
+    }
+  ],
+  "publicKey": {
+     "n": "C4E3F7212602E1E396C0B6623CF11D26204ACE3E7D26685E037AD2507DCE82FC28F2D5F8A67FC3AFAB89A6D818D1F4C28CFA548418BD9F8E7426789A67E73E41",
+     "e": "10001"
+  }
+}

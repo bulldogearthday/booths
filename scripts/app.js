@@ -2,11 +2,12 @@
 (function() {
   'use strict';
 
-  var initialBoothList = initial_booth_data;  // From jsonp!
-  var public_key = null;
+  var initialBoothList = initial_data["booths"];  // From jsonp!
+  var initialPublicKey = initial_data["publicKey"];  // From jsonp!
 
   var app = {
-    hasRequestPending: false,
+    hasBoothRequestPending: false,
+    hasPublicKeyRequestPending: false,
     isLoading: true,
     booths: [],
     spinner: document.querySelector('.loader'),
@@ -20,10 +21,7 @@
     videoWidth: 640,
     videoHeight: 480,
     videoSizeSaved: false,
-    publicKey: {
-      n: "C4E3F7212602E1E396C0B6623CF11D26204ACE3E7D26685E037AD2507DCE82FC\n28F2D5F8A67FC3AFAB89A6D818D1F4C28CFA548418BD9F8E7426789A67E73E41",
-      e: "10001",
-    }
+    publicKey: initialPublicKey,  // From jsonp!
   };
 
 
@@ -35,7 +33,7 @@
 
   document.getElementById('butRefresh').addEventListener('click', function() {
     // Refresh all of the booths
-    app.updateBooths(true);
+    app.updateBooths();
   });
 
   navigator.getUserMedia  = navigator.getUserMedia ||
@@ -309,6 +307,40 @@
     return null;
   }
 
+  app.updatePublicKey = function() {
+    var url = 'https://earthday.firebaseio.com/publicKey.json';
+    if ('caches' in window) {
+      caches.match(url).then(function(response) {
+        if (response) {
+          response.json().then(function(json) {
+            // Only update if the XHR is still pending, otherwise the XHR
+            // has already returned and provided the latest data.
+            if (app.hasPublicKeyRequestPending) {
+              console.log('publicKey updated from cache');
+              app.publicKey = json;
+            }
+          });
+        }
+      });
+    }
+    // Make the XHR to get the data, then update the card
+    app.hasPublicKeyRequestPending = true;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.log('publicKey updated from FireBase');
+          app.publicKey = response;
+          app.hasPublicKeyRequestPending = false;
+          app.savePublicKey();
+        }
+      }
+    };
+    request.open('GET', url);
+    request.send();
+  }
+
   // Updates a booth card with the latest booth information. If the card
   // doesn't already exist, it's cloned from the template.
   app.updateBoothCard = function(data) {
@@ -375,53 +407,56 @@
    *
    ****************************************************************************/
 
-  // Gets a info for a specific booth and update the card with the data
-  app.getBooth = function(boothRecord, preferDownload) {
-    var url = 'https://earthday.firebaseio.com/';
-    url += boothRecord.key + '.json';
-    if ('caches' in window && !preferDownload) {
-      caches.match(url).then(function(response) {
-        if (response) {
-          response.json().then(function(json) {
-            // Only update if the XHR is still pending, otherwise the XHR
-            // has already returned and provided the latest data.
-            if (app.hasRequestPending) {
-              console.log('updated from cache');
-              if (json) {
-                json.key = boothRecord.key;
-                json.label = boothRecord.label;
-                json.description = boothRecord.description;
-              }
-              app.updateBoothCard(json);
-            }
-          });
-        } else if (app.booths !== null) {
-          app.booths.forEach(function(booth) {
-            if (!app.arrayHasOwnIndex(app.booths, booth))
-              app.updateBoothCard(booth);
-          });
-        }
-      });
-    } else if (app.booths !== null && !preferDownload) {
+  app.refreshBooths = function() {
+    if (app.booths !== null) {
       app.booths.forEach(function(booth) {
         if (!app.arrayHasOwnIndex(app.booths, booth))
           app.updateBoothCard(booth);
       });
     }
+  }
+
+  app.updateBoothFromJSONArray = function(jsonArray) {
+    if (jsonArray) {
+      var boothsLen = jsonArray.length;
+      for(var i = 0; i < boothsLen; i++) {
+        app.updateBoothCard(jsonArray[i]);
+      }
+    }
+  }
+
+  // Gets a info for a specific booth and update the card with the data
+  app.updateBooths = function() {
+    var url = 'https://earthday.firebaseio.com/booths.json';
+    if ('caches' in window) {
+      caches.match(url).then(function(response) {
+        if (response) {
+          response.json().then(function(json) {
+            // Only update if the XHR is still pending, otherwise the XHR
+            // has already returned and provided the latest data.
+            if (app.hasBoothRequestPending) {
+              console.log('booths updated from cache');
+              app.updateBoothFromJSONArray(json);
+            }
+          });
+        } else {
+          app.refreshBooths();
+        }
+      });
+    } else {
+      app.refreshBooths();
+    }
     // Make the XHR to get the data, then update the card
-    app.hasRequestPending = true;
+    app.hasBoothRequestPending = true;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          // if (response) {
-          //   response.key = boothRecord.key;
-          //   response.label = boothRecord.label;
-          //   response.description = boothRecord.description;
-          // }
-          app.hasRequestPending = false;
-          app.updateBoothCard(response);
+          app.updateBoothFromJSONArray(response);
+          console.log('booths updated from FireBase');
+          app.hasBoothRequestPending = false;
+          app.saveBooths();
         }
       }
     };
@@ -429,19 +464,17 @@
     request.send();
   };
 
-  // Iterate all of the cards and attempt to get the latest booth data
-  app.updateBooths = function(preferDownload) {
-    app.booths.forEach(function(booth) {
-      if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth, preferDownload);
-    });
-  };
-
   // Save list of cities to localStorage, see note below about localStorage.
   app.saveBooths = function() {
     var booths = JSON.stringify(app.booths);
     // IMPORTANT: See notes about use of localStorage.
     localStorage.booths = booths;
+  };
+
+  app.savePublicKey = function() {
+    var publicKey = JSON.stringify(app.publicKey);
+    // IMPORTANT: See notes about use of localStorage.
+    localStorage.publicKey = publicKey;
   };
 
   /************************************************************************
@@ -455,12 +488,17 @@
    *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
    ************************************************************************/
 
-  app.booths = localStorage.booths;
-  if (app.booths) {
-    app.booths = JSON.parse(app.booths);
+  var localStoredPublicKey = localStorage.publicKey;
+  if (localStoredPublicKey)
+    app.publicKey = JSON.parse(localStoredPublicKey);
+  app.updatePublicKey();
+
+  var localStoredBooths = localStorage.booths;
+  if (localStoredBooths) {
+    app.booths = JSON.parse(localStoredBooths);
     app.booths.forEach(function(booth) {
       if (!app.arrayHasOwnIndex(app.booths, booth))
-        app.getBooth(booth, false);
+        app.updateBoothCard(booth);
     });
   } else {
     app.booths = [];
@@ -469,12 +507,12 @@
         app.updateBoothCard(booth);
       }
     });
-    app.saveBooths();
   }
+  app.updateBooths();
+
 
   if('serviceWorker' in navigator) {
-    navigator.serviceWorker
-             .register('./service-worker.js')
-             .then(function() { console.log('Service Worker Registered'); });
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(function() { console.log('Service Worker Registered'); });
   }
 })();
