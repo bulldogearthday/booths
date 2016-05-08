@@ -5,8 +5,8 @@ var filesToCache = [
   '/index.html',
 
   '/scripts/app.js',
-  '/scripts/qrdecoder.js',
-  '/scripts/rsa.js',
+  '/scripts/qrdecode.min.js',
+  '/scripts/rsa.min.js',
 
   '/data/initial_data.jsonp',
 
