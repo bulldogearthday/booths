@@ -250,7 +250,7 @@
     var unlockedCount = 0;
     var totalCount = 0;
     app.booths.forEach(function(booth) {
-      if (!app.arrayHasOwnIndex(app.booths, booth)) {
+      if (!app.arrayHasOwnIndex(app.booths, booth) && booth.active) {
         totalCount++;
         var unlocked = false;
         if (booth.certificate) {
@@ -351,6 +351,7 @@
       card = { 'key': data.key,
                'label': data.label,
                'description': data.description,
+               'active': data.active,
                "certificate": null,
                "unlocked": false
               };
@@ -358,6 +359,7 @@
     } else {
       card.label = data.label;
       card.description = data.description;
+      card.active = data.active;
       if (data.certificate)
         card.certificate = data.certificate;
     }
@@ -370,6 +372,8 @@
       cardNode.querySelector('.label').textContent = data.label;
       cardNode.querySelector('.description').textContent = data.description;
       cardNode.removeAttribute('hidden');
+      if (!data.active)
+        cardNode.setAttribute('hidden', true);
       app.container.appendChild(cardNode);
     }
 
@@ -389,10 +393,10 @@
     cardNode.querySelector('.icon').classList.remove(card.unlocked ? 'locked': 'unlocked');
     cardNode.querySelector('.icon').classList.add(card.unlocked ? 'unlocked' : 'locked');
     cardNode.querySelector('.icon').classList.add('inflate');
-    if (app.isLoading) {
-      app.spinner.setAttribute('hidden', true);
-      app.isLoading = false;
-    }
+    if (!card.active)
+      cardNode.setAttribute('hidden', true);
+    else
+      cardNode.removeAttribute('hidden');
   };
 
   app.arrayHasOwnIndex = function(array, prop) {
@@ -422,6 +426,10 @@
       for(var i = 0; i < boothsLen; i++) {
         app.updateBoothCard(jsonArray[i]);
       }
+    }
+    if (app.isLoading) {
+      app.spinner.setAttribute('hidden', true);
+      app.isLoading = false;
     }
   }
 
@@ -509,7 +517,6 @@
     });
   }
   app.updateBooths();
-
 
   if('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
