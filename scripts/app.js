@@ -22,6 +22,7 @@
     videoHeight: 480,
     videoSizeSaved: false,
     publicKey: initialPublicKey,  // From jsonp!
+    firebaseRef: null,
   };
 
 
@@ -311,6 +312,16 @@
     return null;
   }
 
+  app.applyPublicKey = function(keyStructure) {
+    if (app.publicKey) {
+      if (app.publicKey.e !== keyStructure.e || app.publicKey.n !== keyStructure.n) {
+        // This will invalidate certificates
+        app.refreshBooths();
+      }
+    }
+    app.publicKey = keyStructure;
+  }
+
   app.updatePublicKey = function() {
     var url = 'https://earthday.firebaseio.com/publicKey.json';
     if ('caches' in window) {
@@ -321,7 +332,7 @@
             // has already returned and provided the latest data.
             if (app.hasPublicKeyRequestPending) {
               console.log('publicKey updated from cache');
-              app.publicKey = json;
+              app.applyPublicKey(json);
             }
           });
         }
@@ -335,6 +346,7 @@
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.log('publicKey updated from FireBase');
+          app.applyPublicKey(response);
           app.publicKey = response;
           app.hasPublicKeyRequestPending = false;
           app.savePublicKey();
@@ -526,4 +538,20 @@
     navigator.serviceWorker.register('./service-worker.js')
       .then(function() { console.log('Service Worker Registered'); });
   }
+
+  window.onload = function() {
+    if (typeof Firebase !== 'undefined') {
+      app.firebaseRef = new Firebase("https://earthday.firebaseio.com/");
+      if (app.firebaseRef) {
+        app.firebaseRef.child("booths").on("value", function(snapshot) {
+          app.updateBoothFromJSONArray(snapshot.val());
+          app.saveBooths();
+        });
+        app.firebaseRef.child("publicKey").on("value", function(snapshot) {
+          app.applyPublicKey(snapshot.val());
+          app.savePublicKey();
+        });
+      }
+    }
+  };
 })();
