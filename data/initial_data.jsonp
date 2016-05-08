@@ -47,14 +47,6 @@ initial_data = {
       "active": true,
       "certificate": null,
       "unlocked": false
-    },
-    {
-      "key": "testadd0",
-      "label": "Test Add 0",
-      "description": "Test Add 0 desc",
-      "active": true,
-      "certificate": null,
-      "unlocked": false
     }
   ],
   "publicKey": {
