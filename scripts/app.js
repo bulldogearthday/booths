@@ -14,7 +14,7 @@
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
     unlockDialog: document.querySelector('.unlock-dialog'),
-    checkDialog: document.querySelector('.check-dialog'),
+    notifiactionDialog: document.querySelector('.notification-dialog'),
     videoSelect: document.querySelector('select#videoSource'),
     unlockNote: document.getElementById('unlockNote'),
     gotVideoSourcesDone: false,
@@ -193,17 +193,17 @@
           app.saveBooths();
           if (window.stream && window.stream.getVideoTracks)
             window.stream.getVideoTracks()[0].stop();
-          app.unlockNote.textContent = 'Successfully unlocked ' + booth.label + '!';
           app.toggleUnlockDialog(false);
+          app.toggleNotificationDialog(true, 'Congratulations!', 'Successfully unlocked ' + booth.label + '!');
           return;
         } else {
-          app.unlockNote.textContent = 'No booth found for this QR. Keep going!';
+          app.unlockNote.textContent = 'No booth found for this QR. Keep trying!';
         }
       } else {
-        app.unlockNote.textContent = 'QR code decoding problem. Keep going!';
+        app.unlockNote.textContent = 'QR code decoding problem. Keep trying!';
       }
     } else {
-      app.unlockNote.textContent = 'Could not decode QR code. Keep going!';
+      app.unlockNote.textContent = 'Could not decode QR code. Keep trying!';
     }
     setTimeout(function() { app.scanQRCode() }, 500);
   }
@@ -244,7 +244,7 @@
   });
 
   document.getElementById('butCheck').addEventListener('click', function() {
-    app.toggleCheckDialog(true);
+    app.toggleNotificationDialog(true, 'Visited Booth Check', '');
     app.spinner.removeAttribute('hidden');
     // Check saved certificates and adjust unlocked states
     var unlockedCount = 0;
@@ -268,11 +268,11 @@
     });
     app.saveBooths();
     app.spinner.setAttribute('hidden', true);
-    document.getElementById('check-summary').textContent = ('' + unlockedCount + ' out of ' + totalCount + ' is unlocked.');
+    document.getElementById('notification-summary').textContent = ('' + unlockedCount + ' out of ' + totalCount + ' is unlocked.');
   });
 
   document.getElementById('butOK').addEventListener('click', function() {
-    app.toggleCheckDialog(false);
+    app.toggleNotificationDialog(false);
   });
 
   /*****************************************************************************
@@ -295,8 +295,12 @@
   };
 
   // Toggles the visibility of the QR scan dialog.
-  app.toggleCheckDialog = function(show) {
-    app.toggleDialog(app.checkDialog, show);
+  app.toggleNotificationDialog = function(show, title, summary) {
+    if (show) {
+      document.getElementById('notification-title').textContent = (title ? title : 'Notification');
+      document.getElementById('notification-summary').textContent = (summary ? summary : '');
+    }
+    app.toggleDialog(app.notifiactionDialog, show);
   };
 
   app.indexBooth = function(key) {
