@@ -1,5 +1,5 @@
 var dataCacheName = 'boothData-v2';
-var cacheName = 'boothPWA2';
+var cacheName = 'boothPWA-v2';
 var filesToCache = [
   '/',
   '/index.html',
